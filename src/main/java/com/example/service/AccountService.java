@@ -19,15 +19,11 @@ public class AccountService {
             return Optional.empty();
         // find if username exists, return empty
         
-        if (repo.getAccountByUsername(username).isPresent())
+        if (repo.findByUsername(username).isPresent())
             return Optional.empty();
         //  return new account
 
         repo.save(new Account(username, password));
-        return repo.findByUsernameAndPassword(username, password);
-    }
-
-    public Optional<Account> findByUsername(String username) {
         return repo.findByUsername(username);
     }
 
