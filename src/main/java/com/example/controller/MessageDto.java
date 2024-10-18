@@ -9,8 +9,10 @@ import lombok.Data;
  public class MessageDto {
 
     private int postedBy;
-    private String messageText;
-    private long timePostedEpoch;
-    private long accountId;
 
+    private String messageText;
+
+    private long timePostedEpoch;
+
+    private long accountId;
 }

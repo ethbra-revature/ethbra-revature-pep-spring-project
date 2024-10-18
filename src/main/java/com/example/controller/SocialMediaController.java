@@ -3,22 +3,18 @@ package com.example.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
@@ -39,10 +35,12 @@ import com.example.service.MessageService;
 @RestController
 @RequestMapping("/")
 public class SocialMediaController {
+    
     public final Logger logger = LoggerFactory.getLogger(SocialMediaController.class);
 
     @Autowired
     AccountService accService;
+    
     @Autowired
     MessageService msgService;
 
@@ -51,11 +49,11 @@ public class SocialMediaController {
         logger.info("Calling POST request for Account registration");
 
         Optional<Account> acc = accService.registerAccount(accDto.getUsername(), accDto.getPassword());
-        if (acc.isPresent())
-            return ResponseEntity.status(200).body(acc.get());
-        //
+        if (acc.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(acc.get());
+        }
 
-        return ResponseEntity.status(409).body(null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
 
     @PostMapping("/login")
@@ -65,10 +63,10 @@ public class SocialMediaController {
         Optional<Account> acc = accService.login(accDto.getUsername(), accDto.getPassword());
 
         if (acc.isPresent()) {
-            return ResponseEntity.status(200).body(acc.get());
+            return ResponseEntity.status(HttpStatus.OK).body(acc.get());
         }
 
-        return ResponseEntity.status(401).body(null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
     @PostMapping("/messages")
@@ -77,9 +75,9 @@ public class SocialMediaController {
 
         Optional<Message> msg = msgService.save(msgDto);
         if (msg.isPresent())
-            return ResponseEntity.status(200).body(msg.get());
+            return ResponseEntity.status(HttpStatus.OK).body(msg.get());
         //
-        return ResponseEntity.status(400).body("No account found \n");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No account found \n");
     }
 
     @GetMapping("/messages")
@@ -88,7 +86,7 @@ public class SocialMediaController {
 
         List<Message> messages = msgService.findAll();
 
-        return ResponseEntity.status(200).body(messages);
+        return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 
     @GetMapping("/messages/{messageId}")
@@ -97,9 +95,9 @@ public class SocialMediaController {
 
         Optional<Message> msg = msgService.findById(messageId);
         if (msg.isPresent())
-            return ResponseEntity.status(200).body(msg.get());
-        return ResponseEntity.status(200).body(null);
-        
+            return ResponseEntity.status(HttpStatus.OK).body(msg.get());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+
     }
 
     @DeleteMapping("/messages/{messageId}")
@@ -108,8 +106,8 @@ public class SocialMediaController {
 
         int numRowsDeleted = msgService.deleteById(messageId);
         if (numRowsDeleted == 1)
-            return ResponseEntity.status(200).body(numRowsDeleted);
-        return ResponseEntity.status(200).body(null);
+            return ResponseEntity.status(HttpStatus.OK).body(numRowsDeleted);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PatchMapping("/messages/{messageId}")
@@ -119,14 +117,14 @@ public class SocialMediaController {
         int msg = msgService.patchMessage(messageId, msgDto);
 
         if (msg == 1)
-            return ResponseEntity.status(200).body(msg);
-        return ResponseEntity.status(400).body(msg);
+            return ResponseEntity.status(HttpStatus.OK).body(msg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 
     @GetMapping("accounts/{accountId}/messages")
     public ResponseEntity<List<Message>> getAllMessages(@PathVariable int accountId) {
         List<Message> messages = msgService.findByAccountId(accountId);
 
-        return ResponseEntity.status(200).body(messages);
+        return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 }
