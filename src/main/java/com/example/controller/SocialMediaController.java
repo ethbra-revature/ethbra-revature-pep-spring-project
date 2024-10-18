@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.azul.crs.client.Response;
 import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.service.AccountService;
@@ -33,7 +32,7 @@ import com.example.service.MessageService;
  */
 
 @RestController
-@RequestMapping("http://localhost:8080")
+@RequestMapping("/")
 public class SocialMediaController {
     public final Logger logger = LoggerFactory.getLogger(SocialMediaController.class);
     
@@ -53,11 +52,6 @@ public class SocialMediaController {
         //
 
         return ResponseEntity.status(409).body(null);
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> testMethod() {
-        return ResponseEntity.status(HttpStatus.OK).body("hello, thank you :)");
     }
 
     @PostMapping("/login")
